@@ -27,3 +27,17 @@ jobs:
       with:
         dotnet-version: 3.1.200
       
+    - name: Install dependencies
+      run: dotnet restore
+      
+    - name: Build and publish
+      run: |
+        dotnet build --configuration Release --no-restore
+        dotnet publish -c Release -o ./publish
+        
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: cardclone
+        publish-profile: ${{ secrets.azureWebAppPublishProfile }}
+        package: ./publish
